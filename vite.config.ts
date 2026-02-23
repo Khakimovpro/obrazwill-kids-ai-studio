@@ -2,9 +2,10 @@ import path from 'path';
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ mode, isSsrBuild }) => {
     const env = loadEnv(mode, '.', '');
-    return {
+
+    const base = {
       server: {
         port: 3000,
         host: '0.0.0.0',
@@ -20,4 +21,24 @@ export default defineConfig(({ mode }) => {
         }
       }
     };
+
+    if (isSsrBuild) {
+      return {
+        ...base,
+        build: {
+          // SSR bundle goes to dist/server/ so it doesn't mix with client assets
+          ssr: true,
+          outDir: 'dist/server',
+          rollupOptions: {
+            input: path.resolve(__dirname, 'entry-server.tsx'),
+            output: {
+              // Predictable name so prerender.mjs can import it reliably
+              entryFileNames: 'entry-server.js',
+            },
+          },
+        },
+      };
+    }
+
+    return base;
 });

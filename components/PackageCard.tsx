@@ -19,11 +19,13 @@ export const PackageCard: React.FC<PackageCardProps> = ({ pkg, dayType, extraGue
   // Visual variants based on popularity
   const cardClasses = pkg.isPopular
     ? 'border-[3px] border-brand-500 shadow-[0_20px_60px_-15px_rgba(192,38,211,0.3)] scale-100 md:scale-110 z-20 ring-4 ring-brand-100 bg-gradient-to-b from-white to-brand-50/30'
-    : 'border border-gray-100 shadow-lg hover:shadow-xl hover:border-brand-200 bg-white';
+    : 'border border-gray-100 shadow-md hover:shadow-xl hover:border-brand-200 hover:-translate-y-1 bg-white';
     
   const buttonClasses = pkg.isPopular
     ? 'bg-gradient-to-r from-brand-600 to-brand-500 text-white hover:from-brand-700 hover:to-brand-600 shadow-lg shadow-brand-200'
-    : 'bg-gray-50 text-gray-800 hover:bg-gray-100 border border-gray-200';
+    : pkg.id === 'vip'
+      ? 'bg-gradient-to-r from-gray-900 to-gray-700 text-white hover:from-black hover:to-gray-800 shadow-lg shadow-gray-300'
+      : 'bg-gray-900 text-white hover:bg-gray-800 shadow-sm';
 
   // Formatting utility
   const formatPrice = (price: number) => {
@@ -52,15 +54,15 @@ export const PackageCard: React.FC<PackageCardProps> = ({ pkg, dayType, extraGue
           </p>
         </div>
 
-        <div className="mb-8 p-4 bg-gray-50 rounded-2xl border border-gray-100 text-center">
-          <div className="flex items-center justify-center gap-1">
-            <span className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight">
+        <div className={`mb-8 p-5 rounded-2xl text-center ${pkg.isPopular ? 'bg-gradient-to-br from-brand-50 to-white border border-brand-100' : 'bg-gradient-to-br from-gray-50 to-white border border-gray-100'}`}>
+          <div className="flex items-baseline justify-center gap-1">
+            <span className={`text-4xl md:text-5xl font-black tracking-tight ${pkg.isPopular ? 'text-brand-700' : 'text-gray-900'}`}>
                 {formatPrice(totalPrice)}
-                <span className="text-3xl text-gray-400 ml-2 font-semibold">₽</span>
             </span>
+            <span className="text-2xl text-gray-400 font-semibold ml-1">₽</span>
           </div>
-          <div className="text-xs text-gray-500 font-medium mt-1 uppercase tracking-wide">
-             Цена за {totalGuests} детей
+          <div className="text-xs text-gray-500 font-medium mt-1.5 uppercase tracking-wide">
+             за {totalGuests} {totalGuests === 8 ? 'детей' : totalGuests < 5 ? 'ребенка' : 'детей'}
           </div>
         </div>
 

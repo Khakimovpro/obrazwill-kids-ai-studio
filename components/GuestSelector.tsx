@@ -1,5 +1,5 @@
 import React from 'react';
-import { Minus, Plus, Users, Baby } from 'lucide-react';
+import { Minus, Plus, Baby } from 'lucide-react';
 import { BASE_GUEST_COUNT, EXTRA_GUEST_PRICE } from '../data';
 
 interface GuestSelectorProps {

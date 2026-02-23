@@ -15,10 +15,10 @@ interface ConstructorProps {
 export const Constructor: React.FC<ConstructorProps> = ({ dayType, setDayType, extraGuests, selectedPackageId, onClearPackage, onOpenManagerPopup }) => {
   const [selectedAddons, setSelectedAddons] = useState<Set<string>>(new Set());
   const [openCategories, setOpenCategories] = useState<Record<string, boolean>>({
-    entertainment: true,
-    activity: true,
-    media: true,
-    decor: true
+    entertainment: false,
+    activity: false,
+    media: false,
+    decor: false
   });
   const [isOrderPopupOpen, setIsOrderPopupOpen] = useState(false);
 
@@ -170,6 +170,35 @@ export const Constructor: React.FC<ConstructorProps> = ({ dayType, setDayType, e
         {/* Left: Options */}
         <div className="flex-1 p-6 md:p-8 bg-gray-50/50 rounded-bl-[2.5rem] lg:rounded-bl-[2.5rem]">
             
+            {/* Day Type Toggle */}
+            {setDayType && (
+                <div className="flex items-center gap-3 mb-6 bg-white rounded-xl border border-gray-200 p-1.5 shadow-sm">
+                    <button
+                        onClick={() => setDayType('weekday')}
+                        className={`flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-sm font-bold transition-all duration-200 ${
+                            dayType === 'weekday'
+                                ? 'bg-brand-600 text-white shadow-sm'
+                                : 'text-gray-500 hover:text-gray-700'
+                        }`}
+                    >
+                        Будни (пн–пт)
+                        <span className={`text-[10px] font-black px-1.5 py-0.5 rounded transition-all ${
+                            dayType === 'weekday' ? 'bg-white/20 text-white' : 'bg-red-50 text-red-500 ring-1 ring-red-100'
+                        }`}>−20%</span>
+                    </button>
+                    <button
+                        onClick={() => setDayType('weekend')}
+                        className={`flex-1 py-2 px-3 rounded-lg text-sm font-bold transition-all duration-200 ${
+                            dayType === 'weekend'
+                                ? 'bg-brand-600 text-white shadow-sm'
+                                : 'text-gray-500 hover:text-gray-700'
+                        }`}
+                    >
+                        Выходные (сб–вс)
+                    </button>
+                </div>
+            )}
+
             {/* Base Included - Compact */}
             <div className={`rounded-2xl p-5 border shadow-sm mb-8 transition-colors ${selectedPackage ? 'bg-brand-50 border-brand-200' : 'bg-white border-brand-100'}`}>
                 <div className="flex items-center justify-between mb-3 border-b border-gray-200/50 pb-2">
@@ -490,8 +519,9 @@ export const Constructor: React.FC<ConstructorProps> = ({ dayType, setDayType, e
                         <label className="block text-sm font-bold text-gray-700 mb-1">Желаемая дата (ориентировочно)</label>
                         <div className="relative">
                             <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                            <input 
-                                type="date" 
+                            <input
+                                type="date"
+                                min={new Date().toISOString().split('T')[0]}
                                 className="w-full pl-10 bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-base focus:outline-none focus:border-brand-400 focus:ring-4 focus:ring-brand-100 transition-all text-gray-700"
                             />
                         </div>

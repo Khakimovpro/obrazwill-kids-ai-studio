@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { PACKAGES } from './data';
 import { DayType } from './types';
 import { PackageCard } from './components/PackageCard';
@@ -8,16 +8,19 @@ import { Constructor } from './components/Constructor';
 import { Timeline } from './components/Timeline';
 import { Reviews } from './components/Reviews';
 import { Locations } from './components/Locations';
-import { Phone, Heart, ShieldCheck, Camera, Sparkles, ArrowUp, Mail, MapPin, Clock, X, MessageCircle, Wand2, Cookie, BellRing, HelpCircle, Timer } from 'lucide-react';
+import { ThankYou } from './components/ThankYou';
+import { PaymentPolicy } from './components/PaymentPolicy';
+import { UserAgreement } from './components/UserAgreement';
+import { FAQ } from './components/FAQ';
+import { Phone, Heart, ShieldCheck, Camera, Sparkles, ArrowUp, Mail, MapPin, Clock, X, MessageCircle, Wand2, Cookie, BellRing, HelpCircle, Timer, Trophy, Star, CalendarDays, Award } from 'lucide-react';
 
-const App: React.FC = () => {
+const MainApp: React.FC = () => {
   const [dayType, setDayType] = useState<DayType>('weekday');
   const [extraGuests, setExtraGuests] = useState<number>(0);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [selectedPackageId, setSelectedPackageId] = useState<string | null>(null);
   
   // Visibility states for menus & Popups
-  const [showHeader, setShowHeader] = useState(true);
   const [showBottomBar, setShowBottomBar] = useState(true);
   const [isContactOpen, setIsContactOpen] = useState(false);
   
@@ -26,6 +29,7 @@ const App: React.FC = () => {
   const [showCookieConsent, setShowCookieConsent] = useState(false);
   const [showExitPopup, setShowExitPopup] = useState(false);
   const [showManagerPopup, setShowManagerPopup] = useState(false);
+  const cookieBannerActiveRef = useRef(false);
 
   useEffect(() => {
     // Scroll handler
@@ -48,14 +52,17 @@ const App: React.FC = () => {
     // Cookie Consent Check
     const consent = localStorage.getItem('cookieConsent');
     if (!consent) {
-        setTimeout(() => setShowCookieConsent(true), 2000);
+        setTimeout(() => {
+            setShowCookieConsent(true);
+            cookieBannerActiveRef.current = true;
+        }, 2000);
     }
 
     // Exit Intent Logic
     const handleMouseLeave = (e: MouseEvent) => {
         if (e.clientY <= 0) {
             const hasSeenExit = sessionStorage.getItem('hasSeenExitPopup');
-            if (!hasSeenExit) {
+            if (!hasSeenExit && !cookieBannerActiveRef.current) {
                 setShowExitPopup(true);
                 sessionStorage.setItem('hasSeenExitPopup', 'true');
             }
@@ -85,6 +92,7 @@ const App: React.FC = () => {
   const acceptCookies = () => {
     localStorage.setItem('cookieConsent', 'true');
     setShowCookieConsent(false);
+    cookieBannerActiveRef.current = false;
   };
 
   const handleManagerSubmit = (e: React.FormEvent) => {
@@ -104,43 +112,36 @@ const App: React.FC = () => {
       </div>
 
       {/* Compact Header */}
-      {showHeader && (
-        <header className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white/90 backdrop-blur-xl border-b border-gray-100 shadow-sm supports-[backdrop-filter]:bg-white/80">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 flex justify-between items-center relative">
-            
-            <div className="text-xl font-black text-brand-900 tracking-tight flex items-center gap-2">
-              <span className="w-7 h-7 bg-gradient-to-br from-brand-500 to-brand-700 rounded-lg flex items-center justify-center text-white text-base shadow-md">O</span>
-              Obrazwill
-            </div>
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl border-b border-gray-100/80 shadow-[0_1px_20px_rgba(0,0,0,0.06)] supports-[backdrop-filter]:bg-white/85">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
 
-            <div className="flex items-center gap-4">
-               <a href="tel:+78412500523" className="group flex items-center gap-2 text-brand-800 font-bold bg-white border border-brand-100 px-3 py-1.5 rounded-full hover:bg-brand-50 hover:border-brand-200 transition-all shadow-sm">
-                <div className="w-6 h-6 rounded-full bg-brand-100 flex items-center justify-center text-brand-600 group-hover:scale-110 transition-transform">
-                  <Phone size={14} fill="currentColor" />
-                </div>
-                <span className="hidden md:inline text-sm">+7 (8412) 50-05-23</span>
-              </a>
-
-              {/* Header Close Button */}
-              <button 
-                onClick={() => setShowHeader(false)}
-                className="w-6 h-6 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-all opacity-40 hover:opacity-100"
-                aria-label="Скрыть меню"
-              >
-                <X size={16} />
-              </button>
-            </div>
-
+          <div className="text-lg font-black text-brand-900 tracking-tight flex items-center gap-2">
+            <span className="w-8 h-8 bg-gradient-to-br from-brand-400 to-brand-700 rounded-lg flex items-center justify-center text-white text-sm shadow-md shadow-brand-200">O</span>
+            Obrazwill
           </div>
-        </header>
-      )}
+
+          <nav aria-label="Навигация по странице" className="hidden lg:flex items-center gap-1">
+            <a href="#pricing" className="text-sm font-semibold text-gray-600 hover:text-brand-600 hover:bg-brand-50 px-4 py-2 rounded-full transition-all">Пакеты и цены</a>
+            <a href="#constructor-section" className="text-sm font-semibold text-gray-600 hover:text-brand-600 hover:bg-brand-50 px-4 py-2 rounded-full transition-all">Конструктор</a>
+            <a href="#faq" className="text-sm font-semibold text-gray-600 hover:text-brand-600 hover:bg-brand-50 px-4 py-2 rounded-full transition-all">FAQ</a>
+          </nav>
+
+          <a href="tel:+78412500523" className="group flex items-center gap-2 text-brand-800 font-bold bg-gradient-to-r from-brand-50 to-white border border-brand-200 px-4 py-2 rounded-full hover:border-brand-400 hover:shadow-md hover:shadow-brand-100 transition-all shadow-sm">
+            <div className="w-6 h-6 rounded-full bg-brand-100 flex items-center justify-center text-brand-600 group-hover:scale-110 transition-transform">
+              <Phone size={13} fill="currentColor" />
+            </div>
+            <span className="hidden md:inline text-sm">+7 (8412) 50-05-23</span>
+          </a>
+
+        </div>
+      </header>
 
       {/* Main Content Wrapper */}
-      <main className={`relative z-10 transition-all duration-300 ${showHeader ? 'pt-20 md:pt-24' : 'pt-8 md:pt-12'}`}>
+      <main className="relative z-10 pt-20 md:pt-24">
         
         {/* Hero Section */}
-        <section className="pb-16 px-4 text-center max-w-5xl mx-auto">
-          <div className="inline-flex items-center gap-2.5 bg-white border border-red-100 rounded-full pl-3 pr-5 py-1.5 text-sm font-bold text-gray-800 mb-8 shadow-sm hover:shadow-md transition-shadow cursor-default">
+        <section aria-label="Главная секция" className="pb-16 px-4 text-center max-w-5xl mx-auto">
+          <div className="inline-flex items-center gap-2.5 bg-gradient-to-r from-red-50 to-pink-50 border border-red-100 rounded-full pl-3 pr-5 py-2 text-sm font-bold text-gray-800 mb-8 shadow-sm hover:shadow-md transition-shadow cursor-default ring-1 ring-red-50">
             <Heart size={18} className="text-red-500 fill-red-500 animate-pulse" />
             <span>Мамы доверяют, дети в восторге</span>
           </div>
@@ -158,40 +159,79 @@ const App: React.FC = () => {
 
           {/* Value Props */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left max-w-5xl mx-auto mb-20">
-              <div className="bg-white/80 backdrop-blur-sm p-6 rounded-3xl shadow-sm border border-white hover:border-green-200 transition-colors group">
-                  <div className="bg-green-100 w-12 h-12 rounded-2xl flex items-center justify-center text-green-600 mb-4 group-hover:scale-110 transition-transform duration-300">
+              <div className="bg-white p-7 rounded-3xl shadow-sm border border-gray-100 hover:border-green-200 hover:shadow-lg hover:shadow-green-50 transition-all duration-300 group">
+                  <div className="bg-gradient-to-br from-green-100 to-emerald-50 w-14 h-14 rounded-2xl flex items-center justify-center text-green-600 mb-5 group-hover:scale-110 transition-transform duration-300 shadow-sm">
                       <ShieldCheck size={28} />
                   </div>
                   <div>
-                      <h3 className="font-bold text-gray-900 text-lg mb-1">100% Спокойствия</h3>
-                      <p className="text-sm text-gray-600 leading-relaxed">Дети заняты и под присмотром. Вы отдыхаете и общаетесь с гостями.</p>
+                      <h3 className="font-black text-gray-900 text-lg mb-2">100% Спокойствия</h3>
+                      <p className="text-sm text-gray-500 leading-relaxed">Дети заняты и под присмотром. Вы отдыхаете и общаетесь с гостями.</p>
                   </div>
               </div>
-              <div className="bg-white/80 backdrop-blur-sm p-6 rounded-3xl shadow-sm border border-white hover:border-orange-200 transition-colors group">
-                  <div className="bg-orange-100 w-12 h-12 rounded-2xl flex items-center justify-center text-orange-500 mb-4 group-hover:scale-110 transition-transform duration-300">
+              <div className="bg-white p-7 rounded-3xl shadow-sm border border-gray-100 hover:border-orange-200 hover:shadow-lg hover:shadow-orange-50 transition-all duration-300 group">
+                  <div className="bg-gradient-to-br from-orange-100 to-amber-50 w-14 h-14 rounded-2xl flex items-center justify-center text-orange-500 mb-5 group-hover:scale-110 transition-transform duration-300 shadow-sm">
                       <Sparkles size={28} />
                   </div>
                   <div>
-                      <h3 className="font-bold text-gray-900 text-lg mb-1">Именинник — звезда</h3>
-                      <p className="text-sm text-gray-600 leading-relaxed">В центре внимания весь праздник, а не только когда выносят торт.</p>
+                      <h3 className="font-black text-gray-900 text-lg mb-2">Именинник — звезда</h3>
+                      <p className="text-sm text-gray-500 leading-relaxed">В центре внимания весь праздник, а не только когда выносят торт.</p>
                   </div>
               </div>
-              <div className="bg-white/80 backdrop-blur-sm p-6 rounded-3xl shadow-sm border border-white hover:border-blue-200 transition-colors group">
-                  <div className="bg-blue-100 w-12 h-12 rounded-2xl flex items-center justify-center text-blue-500 mb-4 group-hover:scale-110 transition-transform duration-300">
+              <div className="bg-white p-7 rounded-3xl shadow-sm border border-gray-100 hover:border-blue-200 hover:shadow-lg hover:shadow-blue-50 transition-all duration-300 group">
+                  <div className="bg-gradient-to-br from-blue-100 to-sky-50 w-14 h-14 rounded-2xl flex items-center justify-center text-blue-500 mb-5 group-hover:scale-110 transition-transform duration-300 shadow-sm">
                       <Camera size={28} />
                   </div>
                   <div>
-                      <h3 className="font-bold text-gray-900 text-lg mb-1">Контент на память</h3>
-                      <p className="text-sm text-gray-600 leading-relaxed">Видео с квеста или фото — чтобы праздник остался в истории.</p>
+                      <h3 className="font-black text-gray-900 text-lg mb-2">Контент на память</h3>
+                      <p className="text-sm text-gray-500 leading-relaxed">Видео с квеста или фото — чтобы праздник остался в истории.</p>
                   </div>
               </div>
           </div>
         </section>
 
+        {/* Social Proof / Stats Section */}
+        <section aria-label="Наши достижения" className="pb-16 px-4">
+          <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4">
+
+            <div className="bg-white border border-gray-100 rounded-3xl p-6 text-center shadow-sm hover:shadow-lg hover:shadow-brand-50 hover:border-brand-200 hover:-translate-y-1 transition-all duration-300 group">
+              <div className="w-12 h-12 bg-gradient-to-br from-brand-100 to-brand-50 rounded-2xl flex items-center justify-center text-brand-600 mx-auto mb-3 group-hover:scale-110 transition-transform duration-300">
+                <Trophy size={22} />
+              </div>
+              <p className="text-3xl font-black text-gray-900 leading-none mb-1">500+</p>
+              <p className="text-xs text-gray-500 font-medium leading-tight">праздников<br/>проведено</p>
+            </div>
+
+            <div className="bg-white border border-gray-100 rounded-3xl p-6 text-center shadow-sm hover:shadow-lg hover:shadow-orange-50 hover:border-orange-200 hover:-translate-y-1 transition-all duration-300 group">
+              <div className="w-12 h-12 bg-gradient-to-br from-orange-100 to-amber-50 rounded-2xl flex items-center justify-center text-orange-500 mx-auto mb-3 group-hover:scale-110 transition-transform duration-300">
+                <CalendarDays size={22} />
+              </div>
+              <p className="text-3xl font-black text-gray-900 leading-none mb-1">5+</p>
+              <p className="text-xs text-gray-500 font-medium leading-tight">лет на рынке<br/>развлечений</p>
+            </div>
+
+            <div className="bg-white border border-gray-100 rounded-3xl p-6 text-center shadow-sm hover:shadow-lg hover:shadow-amber-50 hover:border-amber-200 hover:-translate-y-1 transition-all duration-300 group">
+              <div className="w-12 h-12 bg-gradient-to-br from-amber-100 to-yellow-50 rounded-2xl flex items-center justify-center text-amber-500 mx-auto mb-3 group-hover:scale-110 transition-transform duration-300">
+                <Star size={22} className="fill-amber-400 text-amber-400" />
+              </div>
+              <p className="text-3xl font-black text-gray-900 leading-none mb-1">5.0 ⭐</p>
+              <p className="text-xs text-gray-500 font-medium leading-tight">рейтинг на<br/>Яндекс.Картах</p>
+            </div>
+
+            <div className="bg-white border border-gray-100 rounded-3xl p-6 text-center shadow-sm hover:shadow-lg hover:shadow-green-50 hover:border-green-200 hover:-translate-y-1 transition-all duration-300 group">
+              <div className="w-12 h-12 bg-gradient-to-br from-green-100 to-emerald-50 rounded-2xl flex items-center justify-center text-green-600 mx-auto mb-3 group-hover:scale-110 transition-transform duration-300">
+                <Award size={22} />
+              </div>
+              <p className="text-2xl font-black text-gray-900 leading-none mb-1">2026</p>
+              <p className="text-xs text-gray-500 font-medium leading-tight">«Хорошее место»<br/>Яндекс.Карты</p>
+            </div>
+
+          </div>
+        </section>
+
         {/* Pricing Section */}
-        <section className="pb-24 px-4 max-w-7xl mx-auto" id="pricing">
+        <section aria-labelledby="pricing-heading" className="pb-24 px-4 max-w-7xl mx-auto" id="pricing">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-5xl font-black text-gray-900 mb-4 tracking-tight">Выберите сценарий идеального дня рождения</h2>
+            <h2 id="pricing-heading" className="text-3xl md:text-5xl font-black text-gray-900 mb-4 tracking-tight">Выберите сценарий идеального дня рождения</h2>
             <p className="text-lg text-gray-500">Выберите уровень впечатлений, который подходит вашему ребенку</p>
           </div>
           
@@ -212,13 +252,13 @@ const App: React.FC = () => {
           </div>
 
           {/* Flexible Package Banner */}
-          <div className="max-w-4xl mx-auto mb-20 px-4">
-            <div className="bg-gradient-to-br from-brand-50 to-white border border-brand-100 rounded-[2rem] p-8 md:p-10 text-center relative overflow-hidden shadow-sm">
+          <div className="max-w-4xl mx-auto mb-40 px-4">
+            <div className="bg-gradient-to-br from-brand-50 via-white to-fuchsia-50 border border-brand-100 rounded-[2rem] p-10 md:p-14 text-center relative overflow-hidden shadow-md shadow-brand-100/30">
                 <div className="relative z-10 flex flex-col items-center">
-                    <div className="w-12 h-12 bg-white rounded-full shadow-md flex items-center justify-center text-brand-500 mb-4">
-                        <Wand2 size={24} />
+                    <div className="w-14 h-14 bg-white rounded-2xl shadow-lg shadow-brand-100 flex items-center justify-center text-brand-500 mb-5 ring-1 ring-brand-100">
+                        <Wand2 size={28} />
                     </div>
-                    <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                    <h3 className="text-2xl md:text-3xl font-black text-gray-900 mb-4">
                         Все пакеты — мобильны!
                     </h3>
                     <p className="text-gray-600 md:text-lg max-w-2xl leading-relaxed">
@@ -226,8 +266,8 @@ const App: React.FC = () => {
                     </p>
                 </div>
                 {/* Decorative elements */}
-                <div className="absolute top-0 left-0 w-40 h-40 bg-brand-100/50 rounded-full -translate-x-1/3 -translate-y-1/3 blur-3xl"></div>
-                <div className="absolute bottom-0 right-0 w-40 h-40 bg-accent-orange/10 rounded-full translate-x-1/3 translate-y-1/3 blur-3xl"></div>
+                <div className="absolute top-0 left-0 w-56 h-56 bg-brand-100/60 rounded-full -translate-x-1/3 -translate-y-1/3 blur-3xl"></div>
+                <div className="absolute bottom-0 right-0 w-56 h-56 bg-accent-orange/15 rounded-full translate-x-1/3 translate-y-1/3 blur-3xl"></div>
             </div>
           </div>
 
@@ -256,12 +296,11 @@ const App: React.FC = () => {
         </section>
 
         {/* Lead/Questions Section */}
-        <section className="bg-brand-900 py-16 md:py-24 relative overflow-hidden">
+        <section aria-label="Вопросы и контакты" className="bg-brand-900 py-16 md:py-24 relative overflow-hidden">
              {/* Background Decoration */}
              <div className="absolute inset-0">
                  <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-700/50 rounded-full blur-[100px] -mr-32 -mt-32"></div>
                  <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-brand-800/50 rounded-full blur-[100px] -ml-32 -mb-32"></div>
-                 <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5"></div>
              </div>
 
              <div className="max-w-4xl mx-auto px-4 relative z-10 text-center">
@@ -298,38 +337,15 @@ const App: React.FC = () => {
         {/* NEW: Map Slider Section */}
         <Locations />
 
-        {/* DUPLICATED Pricing Section for Bottom */}
-        <section className="pb-24 px-4 max-w-7xl mx-auto border-t border-gray-200 pt-20">
-          <div className="text-center mb-12">
-             <span className="text-accent-orange font-bold tracking-wider uppercase text-sm mb-2 block animate-pulse">Не упустите дату</span>
-            <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-4 tracking-tight">Всё ещё думаете?</h2>
-            <p className="text-lg text-gray-500">Сравните тарифы еще раз и оставьте заявку, пока есть места</p>
-          </div>
-          
-          <PricingToggle dayType={dayType} setDayType={setDayType} />
-          
-          <GuestSelector extraGuests={extraGuests} setExtraGuests={setExtraGuests} />
-
-          <div className="grid md:grid-cols-3 gap-6 lg:gap-8 items-start px-2">
-            {PACKAGES.map((pkg) => (
-              <PackageCard 
-                key={`${pkg.id}-bottom`} 
-                pkg={pkg} 
-                dayType={dayType} 
-                extraGuests={extraGuests}
-                onSelect={() => handlePackageSelect(pkg.id)}
-              />
-            ))}
-          </div>
-        </section>
+        {/* FAQ Section */}
+        <FAQ onOpenManager={() => setShowManagerPopup(true)} />
 
         {/* FINAL Call to Action Block */}
-        <section className="py-20 px-4 relative">
+        <section aria-label="Оставить заявку" className="py-20 px-4 relative">
           <div className="max-w-5xl mx-auto bg-gradient-to-br from-brand-900 to-brand-800 rounded-[2.5rem] p-8 md:p-14 text-center text-white relative overflow-hidden shadow-2xl shadow-brand-900/30">
               {/* Decor */}
               <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-16 -mt-16"></div>
               <div className="absolute bottom-0 left-0 w-64 h-64 bg-brand-500/30 rounded-full blur-3xl -ml-16 -mb-16"></div>
-              <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
               
               <div className="relative z-10">
                   <h2 className="text-3xl md:text-5xl font-black mb-6 tracking-tight">
@@ -352,13 +368,13 @@ const App: React.FC = () => {
       </main>
 
       {/* Footer */}
-      <footer className={`bg-gray-900 text-white py-16 px-4 relative z-10 transition-all duration-300 ${showBottomBar ? 'mb-[80px]' : ''}`}>
+      <footer className={`bg-[#0f0f13] text-white py-16 px-4 relative z-10 transition-all duration-300 ${showBottomBar ? 'mb-[80px]' : ''}`}>
         <div className="max-w-7xl mx-auto grid md:grid-cols-12 gap-12">
             
             {/* Legal Info + Addresses */}
             <div className="md:col-span-5">
-                <div className="text-3xl font-black text-white mb-6 flex items-center gap-2">
-                  <span className="w-8 h-8 bg-brand-500 rounded-lg flex items-center justify-center text-white text-lg">O</span>
+                <div className="text-3xl font-black text-white mb-6 flex items-center gap-2.5">
+                  <span className="w-9 h-9 bg-gradient-to-br from-brand-400 to-brand-700 rounded-xl flex items-center justify-center text-white text-lg shadow-lg shadow-brand-900/50">O</span>
                   Obrazwill
                 </div>
                 
@@ -366,12 +382,13 @@ const App: React.FC = () => {
                     <p>
                         <strong className="text-gray-200">ИП Фролов Максим Вячеславович</strong><br/>
                         ИНН: 583715087360<br/>
-                        ОГРН: 322583500036950
+                        ОГРН: 322583500036950<br/>
+                        <span className="text-gray-500">Юридический адрес:</span> 440034, Россия, Пензенская область, г. Пенза, ул. Ватутина, д. 93
                     </p>
                 </div>
 
                 <div className="space-y-4">
-                  <h5 className="font-bold text-white text-sm uppercase tracking-wider">Адреса наших квестов в Пензе:</h5>
+                  <h4 className="font-bold text-white text-sm uppercase tracking-wider">Адреса наших квестов в Пензе:</h4>
                   <div className="space-y-2 text-gray-400 text-sm">
                     <div className="flex items-start gap-2">
                         <MapPin size={16} className="shrink-0 mt-0.5 text-brand-500" />
@@ -388,8 +405,14 @@ const App: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="mt-8 text-xs text-gray-600">
-                    © {new Date().getFullYear()} Obrazwill. Все права защищены.
+                <div className="mt-8 text-xs text-gray-600 space-y-1.5">
+                    <p>© {new Date().getFullYear()} Obrazwill. Все права защищены.</p>
+                    <a href="/?payment" className="text-gray-500 hover:text-brand-400 transition-colors underline underline-offset-2 block">
+                      Правила оплаты и защита данных
+                    </a>
+                    <a href="/?agreement" className="text-gray-500 hover:text-brand-400 transition-colors underline underline-offset-2 block">
+                      Пользовательское соглашение
+                    </a>
                 </div>
             </div>
 
@@ -398,20 +421,20 @@ const App: React.FC = () => {
                 <h4 className="font-bold text-white mb-6 text-lg">Связаться с нами</h4>
                 <ul className="space-y-4 text-gray-300">
                   <li className="flex items-center gap-3 group">
-                    <div className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center group-hover:bg-brand-600 transition-colors">
+                    <div className="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-brand-600 group-hover:border-brand-500 transition-all">
                         <Phone size={18} />
                     </div>
                     <div>
-                        <span className="block text-xs text-gray-500 uppercase font-bold">Телефон</span>
+                        <span className="block text-xs text-gray-500 uppercase font-bold tracking-wider mb-0.5">Телефон</span>
                         <a href="tel:+78412500523" className="text-white hover:text-brand-300 transition-colors text-lg font-bold">+7 (8412) 50-05-23</a>
                     </div>
                   </li>
                   <li className="flex items-center gap-3 group">
-                    <div className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center group-hover:bg-brand-600 transition-colors">
+                    <div className="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-brand-600 group-hover:border-brand-500 transition-all">
                         <Mail size={18} />
                     </div>
                     <div>
-                        <span className="block text-xs text-gray-500 uppercase font-bold">Email</span>
+                        <span className="block text-xs text-gray-500 uppercase font-bold tracking-wider mb-0.5">Email</span>
                         <a href="mailto:obraz.strah@yandex.ru" className="text-white hover:text-brand-300 transition-colors">obraz.strah@yandex.ru</a>
                     </div>
                   </li>
@@ -422,7 +445,7 @@ const App: React.FC = () => {
             <div className="md:col-span-3">
                 <h4 className="font-bold text-white mb-6 text-lg">Режим работы</h4>
                 <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-brand-400">
+                    <div className="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-brand-400">
                         <Clock size={18} />
                     </div>
                     <div>
@@ -432,22 +455,21 @@ const App: React.FC = () => {
                     </div>
                 </div>
                 
-                <div className="mt-8 flex gap-3">
-                  {/* Social placeholders */}
-                  <div className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-[#0077FF] hover:text-white transition-all cursor-pointer text-gray-400 border border-gray-700">
-                    <span className="font-bold text-[10px]">VK</span>
-                  </div>
-                  <div className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-[#2AABEE] hover:text-white transition-all cursor-pointer text-gray-400 border border-gray-700">
-                    <span className="font-bold text-[10px]">TG</span>
-                  </div>
-                </div>
+                <nav aria-label="Социальные сети" className="mt-8 flex gap-3">
+                  <a href="https://vk.com/obrazwill" target="_blank" rel="noopener noreferrer" aria-label="ВКонтакте Obrazwill Kids" className="w-11 h-11 bg-white/5 rounded-xl flex items-center justify-center hover:bg-[#0077FF] hover:text-white transition-all text-gray-400 border border-white/10 hover:border-[#0077FF] hover:shadow-lg hover:shadow-blue-500/20">
+                    <span className="font-bold text-xs">VK</span>
+                  </a>
+                  <a href="https://t.me/obrazwill" target="_blank" rel="noopener noreferrer" aria-label="Telegram Obrazwill Kids" className="w-11 h-11 bg-white/5 rounded-xl flex items-center justify-center hover:bg-[#2AABEE] hover:text-white transition-all text-gray-400 border border-white/10 hover:border-[#2AABEE] hover:shadow-lg hover:shadow-sky-500/20">
+                    <span className="font-bold text-xs">TG</span>
+                  </a>
+                </nav>
             </div>
         </div>
       </footer>
 
       {/* Floating Buttons Container */}
       <div className={`fixed right-4 md:right-6 z-[55] flex flex-col items-end gap-3 transition-all duration-300`}
-           style={{ bottom: showBottomBar ? '80px' : '30px' }}>
+           style={{ bottom: showBottomBar ? '92px' : '30px' }}>
          
          {/* Contact Menu Items */}
          <div className={`flex flex-col gap-2 transition-all duration-300 origin-bottom-right ${isContactOpen ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-4 scale-95 pointer-events-none'}`}>
@@ -461,19 +483,19 @@ const App: React.FC = () => {
          </div>
 
          {/* Main Contact Toggle */}
-         <button 
+         <button
             onClick={() => setIsContactOpen(!isContactOpen)}
-            className="w-12 h-12 bg-brand-500 text-white rounded-full shadow-xl shadow-brand-500/30 flex items-center justify-center hover:bg-brand-600 hover:scale-105 transition-all relative z-10"
+            className="w-14 h-14 bg-gradient-to-br from-brand-500 to-brand-700 text-white rounded-2xl shadow-xl shadow-brand-500/40 flex items-center justify-center hover:shadow-2xl hover:shadow-brand-500/50 hover:scale-105 transition-all relative z-10"
             aria-label="Связаться с нами"
          >
             {isContactOpen ? <X size={24} /> : <MessageCircle size={24} fill="currentColor" className="text-white" />}
-            {!isContactOpen && <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse border-2 border-white"></span>}
+            {!isContactOpen && <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-red-500 rounded-full animate-pulse border-2 border-white"></span>}
          </button>
 
          {/* Scroll Top - Stacked below */}
-         <button 
+         <button
             onClick={scrollToTop}
-            className={`w-10 h-10 bg-gray-900/80 backdrop-blur text-white rounded-full shadow-lg flex items-center justify-center hover:bg-black transition-all duration-300
+            className={`w-11 h-11 bg-gray-900/85 backdrop-blur text-white rounded-xl shadow-lg flex items-center justify-center hover:bg-black hover:scale-105 transition-all duration-300
                 ${showScrollTop ? 'opacity-100 scale-100' : 'opacity-0 scale-0 h-0 w-0 overflow-hidden'}
             `}
             aria-label="Наверх"
@@ -485,42 +507,48 @@ const App: React.FC = () => {
 
       {/* Optimized Sticky Bottom Bar */}
       {showBottomBar && (
-        <div className="fixed bottom-0 left-0 right-0 z-[50] bg-white/95 backdrop-blur-xl border-t border-brand-200 shadow-[0_-4px_30px_rgba(0,0,0,0.08)] py-3 px-3 animate-in slide-in-from-bottom-full duration-500">
-             <div className="max-w-4xl mx-auto flex items-center justify-between gap-3 md:gap-4 relative pr-8 md:pr-0">
-                
+        <div className="fixed bottom-0 left-0 right-0 z-[50] bg-white border-t border-gray-200 shadow-[0_-8px_40px_rgba(0,0,0,0.12)] py-4 px-4 animate-in slide-in-from-bottom-full duration-500">
+             <div className="max-w-4xl mx-auto flex items-center justify-between gap-3 md:gap-6 relative pr-8 md:pr-0">
+
                 {/* Dynamic Status Text */}
                 <div className="hidden md:block shrink-0">
                     {isBusinessHours ? (
-                        <p className="font-bold text-gray-900 text-sm leading-tight flex items-center gap-2">
-                            <span className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse ring-4 ring-green-100"></span>
-                            Мы сейчас онлайн и оперативно ответим
-                        </p>
+                        <div>
+                          <p className="font-black text-gray-900 text-sm leading-tight flex items-center gap-2 mb-0.5">
+                              <span className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse ring-4 ring-green-100"></span>
+                              Мы онлайн — ответим быстро!
+                          </p>
+                          <p className="text-xs text-gray-400 pl-4.5">Перезвоним в течение 5 минут</p>
+                        </div>
                     ) : (
-                        <p className="font-bold text-gray-900 text-sm leading-tight flex items-center gap-2">
-                            <span className="w-2.5 h-2.5 rounded-full bg-red-400"></span>
-                            Мы сейчас отдыхаем, но утром сразу перезвоним
-                        </p>
+                        <div>
+                          <p className="font-black text-gray-900 text-sm leading-tight flex items-center gap-2 mb-0.5">
+                              <span className="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+                              Оставьте номер — перезвоним утром
+                          </p>
+                          <p className="text-xs text-gray-400">Работаем с 09:00 до 00:00</p>
+                        </div>
                     )}
                 </div>
 
-                <form className="flex w-full md:w-auto gap-2 flex-1 md:flex-none justify-center" onSubmit={(e) => e.preventDefault()}>
-                    <input 
-                        type="tel" 
-                        placeholder="+7 (___) ___-__-__" 
-                        className="w-full md:w-56 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand-400 focus:ring-2 focus:ring-brand-100 transition-all text-gray-900"
+                <form className="flex w-full md:w-auto gap-2.5 flex-1 md:flex-none justify-center" onSubmit={(e) => { e.preventDefault(); setShowBottomBar(false); alert('Спасибо! Мы перезвоним вам в ближайшее время.'); }}>
+                    <input
+                        type="tel"
+                        placeholder="+7 (___) ___-__-__"
+                        className="w-full md:w-60 bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-brand-400 focus:ring-2 focus:ring-brand-100 transition-all text-gray-900"
                     />
-                    <button className="bg-brand-600 text-white font-bold text-sm px-4 py-2 rounded-lg hover:bg-brand-700 active:scale-95 transition-all shadow-sm shadow-brand-200 whitespace-nowrap">
+                    <button className="bg-gradient-to-r from-brand-600 to-brand-500 text-white font-bold text-sm px-5 py-2.5 rounded-xl hover:from-brand-700 hover:to-brand-600 active:scale-95 transition-all shadow-md shadow-brand-200 whitespace-nowrap">
                         Жду звонка
                     </button>
                 </form>
 
                  {/* Close Button */}
-                 <button 
-                    onClick={() => setShowBottomBar(false)} 
+                 <button
+                    onClick={() => setShowBottomBar(false)}
                     className="absolute right-0 top-1/2 -translate-y-1/2 md:static md:translate-y-0 p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-all"
                     aria-label="Скрыть"
                  >
-                    <X size={18} />
+                    <X size={16} />
                  </button>
              </div>
         </div>
@@ -528,7 +556,7 @@ const App: React.FC = () => {
 
       {/* Cookie Consent Banner */}
       {showCookieConsent && (
-          <div className="fixed bottom-0 md:bottom-20 left-0 right-0 md:left-4 md:right-auto md:max-w-md z-[60] p-4 animate-in slide-in-from-bottom duration-500">
+          <div className={`fixed ${showBottomBar ? 'bottom-[84px]' : 'bottom-2'} md:bottom-6 left-0 right-0 md:left-4 md:right-auto md:max-w-md z-[60] p-4 animate-in slide-in-from-bottom duration-500`}>
             <div className="bg-gray-900/95 backdrop-blur-md text-white p-5 rounded-2xl shadow-2xl border border-white/10 flex flex-col gap-3">
                <div className="flex items-start gap-3">
                    <Cookie className="text-brand-400 shrink-0" size={24} />
@@ -645,4 +673,20 @@ const App: React.FC = () => {
     </div>
   );
 };
+
+const App: React.FC = () => {
+  if (typeof window !== 'undefined') {
+    if (window.location.search.includes('thanks') || window.location.hash === '#thanks') {
+      return <ThankYou />;
+    }
+    if (window.location.search.includes('payment') || window.location.hash === '#payment') {
+      return <PaymentPolicy />;
+    }
+    if (window.location.search.includes('agreement') || window.location.hash === '#agreement') {
+      return <UserAgreement />;
+    }
+  }
+  return <MainApp />;
+};
+
 export default App;
