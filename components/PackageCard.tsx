@@ -18,8 +18,8 @@ export const PackageCard: React.FC<PackageCardProps> = ({ pkg, dayType, extraGue
 
   // Visual variants based on popularity
   const cardClasses = pkg.isPopular
-    ? 'border-[3px] border-brand-500 shadow-[0_20px_60px_-15px_rgba(192,38,211,0.3)] scale-100 md:scale-110 z-20 ring-4 ring-brand-100 bg-gradient-to-b from-white to-brand-50/30'
-    : 'border border-gray-100 shadow-md hover:shadow-xl hover:border-brand-200 hover:-translate-y-1 bg-white';
+    ? 'border-[3px] border-brand-500 shadow-[0_20px_60px_-15px_rgba(192,38,211,0.3)] scale-100 md:scale-110 z-20 ring-4 ring-brand-100'
+    : 'border border-gray-100 shadow-md hover:shadow-xl hover:border-brand-200 hover:-translate-y-1';
     
   const buttonClasses = pkg.isPopular
     ? 'bg-gradient-to-r from-brand-600 to-brand-500 text-white hover:from-brand-700 hover:to-brand-600 shadow-lg shadow-brand-200'
@@ -33,21 +33,29 @@ export const PackageCard: React.FC<PackageCardProps> = ({ pkg, dayType, extraGue
   };
 
   return (
-    <div className={`relative flex flex-col h-full rounded-[2rem] transition-all duration-300 overflow-hidden ${cardClasses}`}>
-      
-      {/* Popular Badge */}
+    <div className={`relative flex flex-col h-full rounded-[2rem] transition-all duration-300 ${cardClasses}`}>
+
+      {/* Popular Badge — вне overflow-hidden, торчит над карточкой */}
       {pkg.isPopular && (
-        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-brand-400 via-brand-500 to-brand-400" />
-      )}
-      {pkg.isPopular && (
-        <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-brand-600 to-brand-500 text-white px-4 py-1.5 rounded-b-xl text-sm font-bold shadow-md flex items-center gap-1.5">
-          <Star size={14} fill="currentColor" className="text-yellow-300" /> 
-          <span className="tracking-wide">ХИТ ПРОДАЖ</span>
+        <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-30 whitespace-nowrap">
+          <div className="relative bg-gradient-to-r from-brand-700 via-brand-500 to-fuchsia-500 text-white px-6 py-2 rounded-full text-sm font-black shadow-[0_6px_24px_-4px_rgba(168,85,247,0.5)] flex items-center gap-2 tracking-wide border border-brand-400/30">
+            <Star size={15} fill="currentColor" className="text-yellow-300 drop-shadow-sm" />
+            <span className="uppercase">ХИТ ПРОДАЖ</span>
+            <Star size={15} fill="currentColor" className="text-yellow-300 drop-shadow-sm" />
+            <span className="absolute inset-0 rounded-full bg-gradient-to-b from-white/20 to-transparent pointer-events-none"></span>
+          </div>
         </div>
       )}
 
+      {/* Inner content wrapper — overflow-hidden здесь, чтобы не клипать бейдж */}
+      <div className={`flex flex-col h-full overflow-hidden rounded-[2rem] ${pkg.isPopular ? 'bg-gradient-to-b from-white to-brand-50/30' : 'bg-white'}`}>
+
+      {pkg.isPopular && (
+        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-brand-400 via-brand-500 to-brand-400 rounded-t-[2rem]" />
+      )}
+
       <div className="p-6 md:p-8 flex-grow flex flex-col">
-        <div className="mb-6 pt-2">
+        <div className={`mb-6 ${pkg.isPopular ? 'pt-5' : 'pt-2'}`}>
           <h3 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">{pkg.name}</h3>
           <p className="text-brand-600 font-medium text-sm mt-1 flex items-center gap-1">
              {pkg.tagline}
@@ -116,12 +124,14 @@ export const PackageCard: React.FC<PackageCardProps> = ({ pkg, dayType, extraGue
       </div>
 
       <div className="p-6 md:p-8 pt-0 mt-auto">
-        <button 
+        <button
           onClick={onSelect}
           className={`w-full py-4 rounded-xl font-bold text-lg transition-all active:scale-[0.98] ${buttonClasses}`}>
           Выбрать {pkg.name}
         </button>
       </div>
+
+      </div>{/* /inner overflow-hidden */}
     </div>
   );
 };

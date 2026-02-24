@@ -4,6 +4,7 @@
 
 html {
   font-size: 90%;
+  scroll-behavior: smooth;
 }
 
 /* Custom scrollbar for Constructor sidebar */

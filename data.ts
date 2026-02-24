@@ -66,7 +66,6 @@ export const ADDONS: AddOnItem[] = [
   { id: 'pinata_empty', name: 'Пиньята без наполнения', price: 4900, category: 'activity', description: 'Наполнение привозят родители' },
 
   // Media
-  { id: 'video_quest', name: 'Видеопрохождение квеста (запись без звука)', price: 1000, category: 'media', description: 'Смешные моменты с камер.' },
   { id: 'video_greet', name: 'Видеопроздравление имениннику', price: 2000, category: 'media', description: 'Личное обращение от героя.' },
   { id: 'photo_report', name: 'Фоторепортаж', price: 3900, category: 'media', description: 'Репортажная съемка праздника' },
   { id: 'video_report', name: 'Видеосъемка', price: 2900, category: 'media', description: 'Яркий клип на память.' },

@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+# Страница «Спасибо» не нужна в поисковом индексе
+Disallow: /?thanks
+
+Sitemap: https://obrazwill-kids.ru/sitemap.xml
